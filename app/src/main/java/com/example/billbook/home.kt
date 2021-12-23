@@ -1,14 +1,29 @@
 package com.example.billbook
 
+import android.annotation.SuppressLint
+import android.app.ProgressDialog
+import android.content.Intent
+import android.content.res.Resources
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.*
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.rpc.context.AttributeContext
+import java.util.*
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,6 +39,7 @@ class home : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private  lateinit var Imageuri:Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,8 +57,15 @@ class home : Fragment() {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val select:Button = view.findViewById(R.id.select)
+        val image:ImageView = view.findViewById(R.id.image)
+        val dat =view.findViewById<TextView>(R.id.date)
+        val upload = view.findViewById<Button>(R.id.upload)
+        val db = Firebase.firestore
+        val amont = view.findViewById<TextView>(R.id.amount)
         val draw = view.findViewById<DrawerLayout>(R.id.draw)
         val nav = findNavController()
         val navview = view.findViewById<NavigationView>(R.id.navview)
@@ -52,17 +75,65 @@ class home : Fragment() {
         }
         navview.setNavigationItemSelectedListener {
             when(it.itemId){
-                R.id.home -> {
-                    nav.navigate(R.id.action_bills_to_home2)
-                }
                 R.id.bills -> {
                     nav.navigate(R.id.action_home2_to_bills)
                 }
             }
             return@setNavigationItemSelectedListener true
         }
+        val progressDialog =  ProgressDialog(context)
+        progressDialog.setMessage(" Uploading image")
+        progressDialog.setCancelable(false)
+        select.setOnClickListener {
+            val intent = Intent()
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+
+            startActivityForResult(intent,100)
+        }
+        upload.setOnClickListener {
+            if (dat.text.toString().isNotEmpty() and amont.text.toString().isNotEmpty() and (image.drawable != null)){
+                progressDialog.show()
+                val date = dat.text
+                val name = FirebaseAuth.getInstance().currentUser?.uid
+                val amount = amont.text
+                val data = hashMapOf(
+                    "date" to "$date",
+                    "amount" to "$amount"
+                )
+                val uid = FirebaseAuth.getInstance().currentUser?.uid
+                db.collection("data").document("$name").collection("date").document("$date").set(data)
+                val storage = FirebaseStorage.getInstance().getReference("image/${uid}/${date}")
+                storage.putFile(Imageuri).addOnCompleteListener {
+                    image.setImageURI(null)
+                    Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+                    if (progressDialog.isShowing) progressDialog.dismiss()
+                }.addOnFailureListener {
+                    if (progressDialog.isShowing) progressDialog.dismiss()
+                    Toast.makeText(context, "Reupload", Toast.LENGTH_SHORT).show()
+
+                }
+
+
+            }
+            else{
+                Toast.makeText(context,"please select an image and enter date and amount",Toast.LENGTH_SHORT).show()
+            }
+        }
+
 
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 100 && resultCode == AppCompatActivity.RESULT_OK) {
+            Imageuri = data?.data!!
+            view?.findViewById<ImageView>(R.id.image)?.setImageURI(Imageuri)
+
+
+        }
+    }
+
 
     companion object {
         /**

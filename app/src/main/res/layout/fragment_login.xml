@@ -60,9 +60,12 @@
         </com.google.android.material.textfield.TextInputLayout>
         <Button
             android:id="@+id/login"
-            android:layout_marginStart="100dp"
-            android:layout_marginTop="30dp"
-            android:layout_width="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_gravity="center"
+            android:background="@drawable/button"
+            android:textAllCaps="false"
+            android:layout_width="150dp"
+            android:textSize="20sp"
             android:layout_height="wrap_content"
             android:text="login" />
 
@@ -76,6 +79,7 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="10sp"
                 android:text="Dont have an account?"
                 android:textSize="18sp"/>
 
@@ -83,7 +87,8 @@
                 android:id="@+id/register"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="10dp"
+                android:paddingStart="12dp"
+                android:textColor="@color/green"
                 android:text="Register"
                 android:textSize="18sp"/>
         </LinearLayout>

@@ -3,6 +3,7 @@ package com.example.billbook
 import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -66,34 +68,31 @@ class login : Fragment() {
         val button =view.findViewById<Button>(R.id.login)
 
         button.setOnClickListener {
-
             val login = logi.text.toString().trim()
             val password = passwor.text.toString().trim()
-            auth.signInWithEmailAndPassword(login,password)
-            .addOnCompleteListener { task->
-                val user:FirebaseUser?= Firebase.auth.currentUser
-                if (task.isSuccessful){
-                    if (user!!.isEmailVerified) {
-                        Log.d("TAG", "user signed in With Email:success")
-                        navcon.navigate(R.id.action_login_to_home2)
+            if ((login.isNotEmpty() and password.isNotEmpty()) and Patterns.EMAIL_ADDRESS.matcher(login).matches()) {
+                auth.signInWithEmailAndPassword(login,password)
+                    .addOnCompleteListener { task ->
+                        val user: FirebaseUser? = Firebase.auth.currentUser
+                        if (task.isSuccessful) {
+                            if (user!!.isEmailVerified) {
+                                Log.d("TAG", "user signed in With Email:success")
+                                navcon.navigate(R.id.action_login_to_home2)
+                            } else {
+                                Toast.makeText(
+                                    context, "verify ur email to use app",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                Firebase.auth.signOut()
+                            }
+                        }
                     }
-                    else{
-                        Toast.makeText(
-                            context, "verify ur email to use app",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        Firebase.auth.signOut()
-                    }
-                }
-                else {
-                    Toast.makeText(
-                        context, "${task.exception}",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            }else{
+                snackbar("please check your email and password")
             }
-    }
-    }
+
+        }
+}
 
     override fun onStart() {
         super.onStart()
@@ -102,8 +101,9 @@ class login : Fragment() {
         val currentuser=auth.currentUser
         if(currentuser!=null){
             navcon.navigate(R.id.action_login_to_home2)
+        }
     }
-
-
+    fun snackbar(string:CharSequence) {
+        Snackbar.make(requireContext(),requireView(),string, Snackbar.LENGTH_SHORT).show()
     }
 }

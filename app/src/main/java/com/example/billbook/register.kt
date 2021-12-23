@@ -2,13 +2,16 @@ package com.example.billbook
 
 import android.os.Bundle
 import android.util.Log
+import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -54,12 +57,17 @@ class register : Fragment() {
         val emai:TextInputEditText=view.findViewById(R.id.email)
         val passwor:TextInputEditText=view.findViewById(R.id.password1)
         val signup:Button= view.findViewById(R.id.sigup)
+        val back:ImageView=view.findViewById(R.id.back1)
+        back.setOnClickListener {
+            navcon.popBackStack()
+        }
         signup.setOnClickListener {
-            val email= emai.text.toString().trim()
-            val password= passwor.text.toString().trim()
-            auth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener { task->
-                        val user: FirebaseUser?= Firebase.auth.currentUser
+            val email = emai.text.toString().trim()
+            val password = passwor.text.toString().trim()
+            if ((email.isNotEmpty() and password.isNotEmpty()) and Patterns.EMAIL_ADDRESS.matcher(email).matches())  {
+                auth.createUserWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        val user: FirebaseUser? = Firebase.auth.currentUser
                         if (task.isSuccessful) {
                             Log.d("TAG", "user created With Email:success")
                             Toast.makeText(
@@ -69,8 +77,7 @@ class register : Fragment() {
                             user?.sendEmailVerification()
                             Firebase.auth.signOut()
                             navcon.popBackStack()
-                        }
-                        else {
+                        } else{
                             Toast.makeText(
                                 context, "${task.exception}",
                                 Toast.LENGTH_SHORT
@@ -79,7 +86,12 @@ class register : Fragment() {
                         }
 
 
-        }
+                    }
+            }
+            else {
+                snackbar("please check your email and password")
+            }
+
         }
     }
 
@@ -101,5 +113,8 @@ class register : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+    fun snackbar(string:CharSequence) {
+            Snackbar.make(requireContext(),requireView(),string,Snackbar.LENGTH_SHORT).show()
     }
 }

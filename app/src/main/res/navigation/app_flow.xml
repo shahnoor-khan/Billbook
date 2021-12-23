@@ -12,7 +12,8 @@
         tools:layout="@layout/fragment_login" >
         <action
             android:id="@+id/action_login_to_home2"
-            app:destination="@id/home2" />
+            app:destination="@id/home2"
+            app:popUpTo="@id/home2"/>
         <action
             android:id="@+id/action_login_to_register"
             app:destination="@id/register" />
@@ -24,7 +25,8 @@
         tools:layout="@layout/fragment_home" >
         <action
             android:id="@+id/action_home2_to_bills"
-            app:destination="@id/bills" />
+            app:destination="@id/bills"
+            app:popUpTo="@id/bills"/>
     </fragment>
     <fragment
         android:id="@+id/bills"
@@ -32,16 +34,22 @@
         android:label="fragment_bills"
         tools:layout="@layout/fragment_bills" >
         <action
-            android:id="@+id/action_bills_to_home2"
-            app:destination="@id/home2" />
+            android:id="@+id/action_bills_to_bill1"
+            app:destination="@id/bill" />
     </fragment>
     <fragment
         android:id="@+id/register"
         android:name="com.example.billbook.register"
         android:label="fragment_register"
-        tools:layout="@layout/fragment_register" >
-        <action
-            android:id="@+id/action_register_to_login"
-            app:destination="@id/login" />
+        tools:layout="@layout/fragment_register" />
+    <fragment
+        android:id="@+id/bill"
+        android:name="com.example.billbook.bill"
+        android:label="fragment_bill"
+        tools:layout="@layout/fragment_bill" >
+        <argument
+            android:name="date"
+            app:argType="string"
+            android:defaultValue="date" />
     </fragment>
 </navigation>
