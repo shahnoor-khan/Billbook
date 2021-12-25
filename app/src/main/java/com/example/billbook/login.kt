@@ -57,7 +57,7 @@ class login : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        auth=Firebase.auth
+        val auth=Firebase.auth
         val navcon= findNavController()
         val register:TextView= view.findViewById(R.id.register)
         register.setOnClickListener{
@@ -80,7 +80,7 @@ class login : Fragment() {
                                 navcon.navigate(R.id.action_login_to_home2)
                             } else {
                                 Toast.makeText(
-                                    context, "verify ur email to use app",
+                                    context, "verify your email to use app",
                                     Toast.LENGTH_SHORT
                                 ).show()
                                 Firebase.auth.signOut()

@@ -16,6 +16,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 // TODO: Rename parameter arguments, choose names that match
@@ -52,7 +53,9 @@ class register : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        auth=Firebase.auth
+        val db = Firebase.firestore
+        val auth=Firebase.auth
+        val name1 = view.findViewById<TextInputEditText>(R.id.name3)
         val navcon = findNavController()
         val emai:TextInputEditText=view.findViewById(R.id.email)
         val passwor:TextInputEditText=view.findViewById(R.id.password1)
@@ -62,21 +65,30 @@ class register : Fragment() {
             navcon.popBackStack()
         }
         signup.setOnClickListener {
+            val name = name1.text.toString()
             val email = emai.text.toString().trim()
             val password = passwor.text.toString().trim()
+            val hash = hashMapOf(
+                "name" to "$name",
+                "email" to "$email"
+            )
             if ((email.isNotEmpty() and password.isNotEmpty()) and Patterns.EMAIL_ADDRESS.matcher(email).matches())  {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         val user: FirebaseUser? = Firebase.auth.currentUser
                         if (task.isSuccessful) {
+                            val uid = user?.uid
+                            db.collection("data").document("$uid").collection("user").document("name").set(hash).addOnCompleteListener {
+                                user?.sendEmailVerification()?.addOnCompleteListener {
+                                    Firebase.auth.signOut()
+                                    navcon.popBackStack()
+                                    Toast.makeText(
+                                        context, "verify ur email and login ",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                            }
                             Log.d("TAG", "user created With Email:success")
-                            Toast.makeText(
-                                context, "verify ur email and login ",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            user?.sendEmailVerification()
-                            Firebase.auth.signOut()
-                            navcon.popBackStack()
+                            }
                         } else{
                             Toast.makeText(
                                 context, "${task.exception}",

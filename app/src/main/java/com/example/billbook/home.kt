@@ -19,6 +19,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -60,23 +61,40 @@ class home : Fragment() {
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val db = Firebase.firestore
+        val name = FirebaseAuth.getInstance().currentUser!!.uid
+        var a = ""
+        var b = ""
+        db.collection("data").document(name).collection("user").document("name").get().addOnSuccessListener { doc ->
+            a = doc.data?.get("email").toString()
+            b  = doc.data?.get("name").toString()
+
+        }
         val select:Button = view.findViewById(R.id.select)
         val image:ImageView = view.findViewById(R.id.image)
         val dat =view.findViewById<TextView>(R.id.date)
         val upload = view.findViewById<Button>(R.id.upload)
-        val db = Firebase.firestore
         val amont = view.findViewById<TextView>(R.id.amount)
         val draw = view.findViewById<DrawerLayout>(R.id.draw)
         val nav = findNavController()
         val navview = view.findViewById<NavigationView>(R.id.navview)
         val toolbar:Toolbar = view.findViewById(R.id.toolbar)
         toolbar.setNavigationOnClickListener {
+            val gmail = view.findViewById<TextView>(R.id.gmail)
+            val Name = view.findViewById<TextView>(R.id.Name)
+            gmail.text = a
+            Name.text = b
             draw.openDrawer(navview)
         }
         navview.setNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.bills -> {
                     nav.navigate(R.id.action_home2_to_bills)
+                    draw.close()
+                }
+                R.id.signout -> {
+                    Firebase.auth.signOut()
+                    nav.navigate(R.id.action_home2_to_login)
                 }
             }
             return@setNavigationItemSelectedListener true
@@ -95,15 +113,13 @@ class home : Fragment() {
             if (dat.text.toString().isNotEmpty() and amont.text.toString().isNotEmpty() and (image.drawable != null)){
                 progressDialog.show()
                 val date = dat.text
-                val name = FirebaseAuth.getInstance().currentUser?.uid
                 val amount = amont.text
                 val data = hashMapOf(
                     "date" to "$date",
                     "amount" to "$amount"
                 )
-                val uid = FirebaseAuth.getInstance().currentUser?.uid
                 db.collection("data").document("$name").collection("date").document("$date").set(data)
-                val storage = FirebaseStorage.getInstance().getReference("image/${uid}/${date}")
+                val storage = FirebaseStorage.getInstance().getReference("image/${name}/${date}")
                 storage.putFile(Imageuri).addOnCompleteListener {
                     image.setImageURI(null)
                     Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
@@ -133,6 +149,13 @@ class home : Fragment() {
 
         }
     }
+
+//    override fun onStop() {
+//        super.onStop()
+////         val nav =view?.findViewById<NavigationView>(R.id.navview)
+//        val dra = view?.findViewById<DrawerLayout>(R.id.draw)
+//        dra?.closeDrawers()
+//    }
 
 
     companion object {

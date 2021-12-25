@@ -13,7 +13,8 @@
         <action
             android:id="@+id/action_login_to_home2"
             app:destination="@id/home2"
-            app:popUpTo="@id/home2"/>
+            app:popUpTo="@id/home2"
+            app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_login_to_register"
             app:destination="@id/register" />
@@ -27,6 +28,11 @@
             android:id="@+id/action_home2_to_bills"
             app:destination="@id/bills"
             app:popUpTo="@id/bills"/>
+        <action
+            android:id="@+id/action_home2_to_login"
+            app:destination="@id/login"
+            app:popUpTo="@id/login"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/bills"
