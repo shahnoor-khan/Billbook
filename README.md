@@ -5,34 +5,35 @@ This video demonstrates how this application works.I used firebase auth for regi
 To manage this project are devops is used.
 when the user first open the application the user had register itself this can be done on registration page.
 
-![WhatsApp Image 2023-03-07 at 1 59 36 AM](https://user-images.githubusercontent.com/89389741/223223692-9bc2bd7c-0946-42df-aabe-65cbc87953c3.jpeg)
+![signup](https://user-images.githubusercontent.com/89389741/223225123-cf4c39ca-57ad-4cec-9706-1a7587a35c9b.jpg)
 >>>Registration page
 
 
 
 Then the user will get the verification mail on the mail they entered. After verifying they can login through login screen. This implementation of login and register is done using Firebase Auth.
 
-
-![WhatsApp Image 2023-03-07 at 1 59 37 AM](https://user-images.githubusercontent.com/89389741/223223751-c2fe8013-c7ea-4aec-b7bb-ef193b315dd9.jpeg)
+![login](https://user-images.githubusercontent.com/89389741/223225209-ccc4e6db-7a64-4987-9561-8f81f98ff6e1.jpg)
 >>>Login page
 
 
 After that user can enter into the app, they choose a particular date using date and time picker, Bill from gallery and put the amount that is on the bill.
 
 
-![WhatsApp Image 2023-03-07 at 1 59 38 AM](https://user-images.githubusercontent.com/89389741/223223800-bc363a34-9836-44c4-a763-268183e5c29c.jpeg)
->>> Home page
+
+>>>![home](https://user-images.githubusercontent.com/89389741/223225251-75ba2a63-4367-4df6-888f-5f3ab3079afe.jpg)
+ Home page
 
 
 
 Once selecting everything the user can click on upload button to upload the data. The data is getting stored on firestore and images on Firebase storage.
 The user can check there bills whenever they want by opening the drawer and going on bills page. Each bill can be referred by date and amount.
 
-![WhatsApp Image 2023-03-07 at 1 59 37 AM (1)](https://user-images.githubusercontent.com/89389741/223223882-60774e09-7380-41b0-884d-bfcdd2bf0bc1.jpeg)
-![WhatsApp Image 2023-03-07 at 1 59 38 AM (1)](https://user-images.githubusercontent.com/89389741/223223902-48d300c1-7179-451c-8222-9c36a390643b.jpeg)
 
+
+![drawer](https://user-images.githubusercontent.com/89389741/223225296-5dfef7da-e486-4319-b264-82e3aca99df1.jpg)
+![bills](https://user-images.githubusercontent.com/89389741/223225316-a889c2f4-1032-40f5-9c80-85c6610270d1.jpg)
 >>> Drawer and bills page
 
 
 The user can then click on item to check the bill.
-![Screenshot_20230307_010906](https://user-images.githubusercontent.com/89389741/223213287-bb090bdd-b611-42f7-ac96-8f4e5b0a91c1.jpg)
+![bill](https://user-images.githubusercontent.com/89389741/223225438-eac1aedc-cbcb-4662-9686-5fbd4c580c12.jpg)
